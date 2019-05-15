@@ -142,6 +142,224 @@ if (S in S_A)
 	return sucess
 
 
+/////////////////////////
+//  2019-04-12 Wk2 D3  //
+/////////////////////////
+
+Flex: Fast LEXical analyzer generator
+	successor of Lex: A scanner generator
+		Written by Mike Lesk, Eric Schmidt; (Google) in the 1970s
+
+
+// Syntax
+Extension: .l
+Input file consists of 3 main sections separated by %%
+
+definition
+%%
+rules
+%%
+user code
+
+// Definitions
+1. Initial Code Declarations
+	- must be closed in a block enclosed "%{" and "%}" and consist of C/C++ code to be copied verbatim to the top of the generated scanner file.
+	Init code could be used to declare inits.
+	%{
+	int num_chars = 0;
+	int num_words = 0;
+	int num_lines = 0;
+	%}
+	
+2. Name Definitions
+	
+
+3. Flex Option Directives
+
+
+
+
+
+/////////////////////////
+//  2019-04-15 Wk3 D1  //
+/////////////////////////
+
+//scanner.l
+
+// Def
+%{
+#include <iostream>
+#include <vector>
+#include <set>
+
+struct _word {
+	std::string lexeme;
+	std::string category;
+};
+
+std::vector<struct _word> _words;
+std::set<std::string> _ids;
+bool _error = false;
+%}
+
+%option noyywrapp
+%option yylineno
+
+void _save_word(std::string lexeme, std::string)
+
+
+%%
+// Rules
+
+[ \t\n]* {} 	//ignore whitespace
+
+[a-z][0-9]? {
+				_save_word(yytext, "IDENTIFIER"); //save the identifier
+				_ids.insert(yytext);
+			}
+
+[0-9]+("."[0-9]+)? {	//trailing # are optional.
+				_save_word(yytext, "NUMBER");
+				   }
+
+"="					{_save_word(yytext, "EQUALS");}
+"+"					{_save_word(yytext, "PLUS");}
+
+.						{				//everything else is a error
+					std::cerr << "Invalid symbol on line " << yyline << ":" << yytext << std::endl;
+					_err = true;
+						}
+
+<<EOF>>			{
+							if (_error) {
+								return 1;
+							} else {
+								return 0;
+							}
+						}
+
+
+%%
+// The CPP file here can be written separately.
+
+int main() {
+	if (!yylex()) {			//if no errors
+			for (int i = 0; i < _ words.size(); i++) {
+				std::cout << _words[i] category << "\t\t" << _words[i].
+			}
+	}
+}
+
+
+
+
+/////////////////////////
+//  2019-05-01 Wk5 D2  //
+/////////////////////////
+
+parser does the computation and stores the value in the variable.
+you can make calculators in parsers
+
+//parser.y
+%(
+#include <iostream>
+#include <map>
+
+std::map<std::string, float> symbols;
+void yyerror(const char* err); //use yyerror to check for errors
+extern int yylex();	//parser uses yylex, you need to tell it exists.
+%)
+
+//write a CFG that will be parsed (term syms,non-term syms)
+
+//we're telling bison that everything is gonna be defined by...
+ //%define api.value.type (std ::string*)
+
+// union type is like a struct type except 1 thing per variable.
+
+%union {
+// if other value of union is declared, its overwritten.
+	std::string* str; //constructor can't do string
+	float val;
+	int category.
+}
+	//yystype
+
+%%
+
+
+%%
+
+
+/////////////////////////
+//  2019-05-06 Wk6 D1  //
+/////////////////////////
+bison is a bottom up parser
+
+statement
+ :	IDENTIFIER EQUALS expression SEMICOLON
+ ;
+
+expression 			// this is $$
+ : LPAREN expression RPAREN		{ $$ = $2; } // always evaluate this first
+ | expression PLUS expression { $$ = $1 + $3; }
+ | expression MINUS expression 	{ $$ = $1 - $3; }
+ | expression TIMES expression 	{ $$ = $1 * $3; }
+ | expression DIVIDEDBY expression {$$ = $1 /$3; }
+ | NUMBER { $$ = $1; }
+ | IDENTIFIER { $$ = symbols[*$1]; delete $1; }
+
+
+ID:b EQUALS ID:a1 PLUS NUM:2 SEMICOLON
+  expression:	ID-PLUS-NUM 
+  statement: ID-EQ-exp-SEMI
+
+yyparse(); 	// calls
+yylex(); 	// in a loop
+
+bison -d -o parcer.cpp parser.y 	//-d produces hpp files.
+
+[a-z][0-9]? 	{
+				yylval.str = new std:string(yyytext, yyleng);
+				return IDENTIFIER;
+				}
+
+[0-9]+("."[0-9]+)? {
+					 yylval
+					 return NUMBER;
+}
+
+{ yylval.category = NUMBER; return yylval.category;}
+ 
+
+
+
+
+
+
+yylex() {
+	yypush.parse()
+}
+
+%locations  //line, column # for error
+%define parse.error verbose // more details on type of error.
+
+YYSTYPE yylval; // 
+YYLTYPE YYLLOC; // use to store location (first-last line, column)
+
+#define YY_USER_ACTION \ //allows code (next line) to be executed whenever any rule is fired. 
+	yylloc.first_line = yyloc.line = yylineno; // can be defined using macro
+
+
+
+symbols are accessed by "$$" or "$#"
+location of symbols can be accessed by "@#"  
+yylerror needs updated. 
+void yyeror (YYLTYPE)
+need to include special symbol to recognize all errors.
+
+
+error SEMICOLON { std:cerr << "ERROR: bad stmt on line " << @1.first_line << std::endl; }; //error: special non-terminal that separates which statement
 
 
 
@@ -149,26 +367,26 @@ if (S in S_A)
 
 
 
+/////////////////////////
+//  2019-05-06 Wk7 D3  //
+/////////////////////////
 
+Assignment 3 out https://github.com/osu-cs480-sp19/assignment-3-parkj6.git
 
+focus on passing nodes up the tree (AST)
+ID:a = NUM:2 + ID:b 	//$$ = +, $1 = 2, $3 = b
 
+=(a,+);
++(2,b);
 
+While_statement
+  : WHILE condition COLON NEWLINE block { $$ = new std::string("while (" + $2 + ") " + *$5 + "\n"); delete $2, delete $%; );
 
+while = $$, $2 = condition  $5 = block.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+line 72: root node of the CST
+tree = directed graphs
+nodes and edges can be declared in any order as long as they''re there.
 
 
 
