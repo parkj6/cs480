@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"name": "assignment-2-gillemic",
+			"path": "code/assignment-2-gillemic"
+		},
+		{
+			"name": "assignment-3-gillemic",
+			"path": "code/assignment-3-gillemic"
+		},
+		{
+			"name": "bison",
+			"path": "code/bison"
+		},
+		{
+			"name": "llvm",
+			"path": "code/llvm"
+		},
+		{
+			"path": "code/hppstufft"
+		},
+		{
+			"path": "code/final-project-gillemic-master"
+		}
+	],
+	"settings": {}
+}

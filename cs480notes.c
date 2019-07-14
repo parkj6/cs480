@@ -394,3 +394,92 @@ nodes and edges can be declared in any order as long as they''re there.
 
 
 
+
+
+/////////////////////////
+//  2019-05-22 Wk8 D2  //
+/////////////////////////
+
+Bottom up parsing and LR(1) Grammars
+	Left-to-right scan of the source program
+	Rightmost derivation (in reverse)
+	1 word of lookahead
+
+LL(1) is a subbset of LR(1) grammar so it is strictly more expensive.
+
+Shift-reduce parsing
+	Shieft - read one new input token from scanner
+
+
+
+
+
+
+
+/////////////////////////
+//  2019-05-24 Wk8 D3  //
+/////////////////////////
+
+
+Closure Operation -  is a iterative loop operation to add more items until it cant
+
+[Goal -> .List, eof] 	// goal to look for list
+[List -> .List Pair eof] 
+[List -> .Pair, eof]	// reduce to look for goal
+[List -> .List Pair, (]
+[List -> .Pair, (]		// all are recognizable from top.
+[Pair -> .(Pair), eof]
+[Pair -> .(), eof]
+[Pair -> .(Pair), (]
+[Pair -> .(), (]
+
+// . are placeholders to wait for a pair.
+
+
+
+Transition Operation - from this set, where are we gonna go? - start with 1 set (S0), loop through all the symbols in the ground (terminal and nontermial), led by a goto. looking for the next LR1 state.
+Copy the list, move the placeholder over one. 
+Transision - S0
+[Pair -> (.Pair), eof] 	// partial pair to recognize 
+[Pair -> (.), eof]
+[Pair -> (.Pair),(]
+[Pair -> (.),(]
+[Pair -> .(Pair, )]
+[Pair -> .(),)]
+
+S0, ( -> S1
+Transition S1 (
+	[Pair -> (.Pair), )]
+	[Pair -> (.) , )]
+	// and then repeats
+
+
+
+
+
+/////////////////////////
+//  2019-06-03 Wk10 D1  //
+/////////////////////////
+
+#define YOU FUCKED UP. Come to class more on time next time. 
+
+alloca
+load
+store
+
+store after you allocate the space (with alloca)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
